@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  dbv5tds:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+      MYSQL_DATABASE: tsd_db
+      MYSQL_TCP_PORT: 3307
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
+    ports:
+      - '3307:3307'
+    expose:
+      - 3307
+    volumes:
+      - dbv5tds:/var/lib/dbv5tds
+      - dbv5tds_config:/etc/dbv5tds
+  dbv8tds:
+    image: mysql:8.0
+    cap_add:
+      - SYS_NICE
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+      MYSQL_DATABASE: tsd_db
+      MYSQL_TCP_PORT: 3308
+    ports:
+        - '3308:3308'
+    expose:
+      - 3308
+    volumes:
+        - dbv8tds:/var/lib/dbv8tds
+        - ./dbv8tds/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  dbv5tds:
+  dbv5tds_config:
+  dbv8tds:
+    driver: local
